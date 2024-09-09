@@ -1,0 +1,14 @@
+.plant-card {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    background-color: white;
+  }
+  
+  .plant-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
