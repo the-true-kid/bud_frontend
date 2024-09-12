@@ -1,20 +1,23 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './pages/Login';
-import Register from './pages/Register'; // Import Register component
-import GardenView from './pages/GardenView';
-import PlantView from './pages/PlantView';
 import { UserProvider } from './contexts/UserContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import Login from './pages/Login';  // Login is small, no need to lazy load
+
+// Lazy load other components for better performance
+const Register = React.lazy(() => import('./pages/Register'));
+const GardenView = React.lazy(() => import('./pages/GardenView'));
+const PlantView = React.lazy(() => import('./pages/PlantView'));
+const NotFound = React.lazy(() => import('./pages/NotFound'));  // 404 page
 
 function App() {
   return (
     <UserProvider>
       <Router>
-        <div>
+        <Suspense fallback={<div>Loading...</div>}> {/* Lazy loading fallback */}
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/register" element={<Register />} /> {/* New registration route */}
+            <Route path="/register" element={<Register />} />
             <Route
               path="/garden"
               element={
@@ -31,8 +34,10 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            {/* Add a 404 Not Found route */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
-        </div>
+        </Suspense>
       </Router>
     </UserProvider>
   );
