@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../contexts/UserContext'; // Import UserContext
 import InputField from '../components/InputField';
 import Button from '../components/Button';
 
@@ -8,11 +9,23 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { login } = useContext(UserContext); // Access login function from context
 
-  const handleLogin = () => {
-    // Placeholder logic for login validation
+  const handleLogin = async () => {
     if (username && email && password) {
-      navigate('/garden'); // Redirect to Garden View
+      try {
+        // Call the login function from UserContext (which calls the backend API)
+        const success = await login(username, email, password);
+        if (success) {
+          navigate('/garden'); // Redirect to Garden view on success
+        } else {
+          alert('Login failed. Please check your credentials.');
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+      }
+    } else {
+      alert('Please fill out all fields.');
     }
   };
 
