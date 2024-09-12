@@ -8,10 +8,12 @@ import Button from '../components/Button'; // Assuming you have this component
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // Add loading state
   const { login } = useContext(UserContext); // Get the login function from the context
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    setLoading(true); // Set loading to true while processing
     try {
       const success = await login(email, password); // Call login function from context
       if (success) {
@@ -21,6 +23,8 @@ const Login = () => {
       }
     } catch (error) {
       console.error('Error logging in:', error);
+    } finally {
+      setLoading(false); // Reset loading state after login attempt
     }
   };
 
@@ -29,7 +33,7 @@ const Login = () => {
       <h1>Login</h1>
       <InputField label="Email" value={email} onChange={e => setEmail(e.target.value)} />
       <InputField label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-      <Button label="Login" onClick={handleLogin} />
+      <Button label={loading ? 'Logging in...' : 'Login'} onClick={handleLogin} disabled={loading} /> {/* Disable button during loading */}
     </div>
   );
 };

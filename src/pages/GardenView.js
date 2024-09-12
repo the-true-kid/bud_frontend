@@ -1,24 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PlantCard from '../components/PlantCard';
 import SearchBar from '../components/SearchBar';
+import { UserContext } from '../contexts/UserContext';  // Import the UserContext for authentication
+import { useNavigate } from 'react-router-dom';  // For redirecting to login if user is not authenticated
 
 const GardenView = () => {
   const [plants, setPlants] = useState([]);
-  const userId = 2;  // Replace with actual logged-in user ID
+  const { user, loading, error } = useContext(UserContext);  // Get user info and loading/error states from context
+  const navigate = useNavigate();
 
   useEffect(() => {
+    // If not loading and no user, redirect to login page
+    if (!loading && !user) {
+      navigate('/login');
+    }
+
     const fetchUserPlants = async () => {
-      const response = await fetch(`http://localhost:5000/api/userPlants/users/${userId}`);
-      const data = await response.json();
-      setPlants(data.map(userPlant => userPlant.plant));
+      const token = localStorage.getItem('token');  // Retrieve the JWT token from localStorage
+      if (!token) {
+        navigate('/login');  // Redirect to login if no token is found
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/userPlants`, {
+          headers: {
+            Authorization: `Bearer ${token}`,  // Send the JWT token in the Authorization header
+          },
+        });
+        const data = await response.json();
+        setPlants(data.map(userPlant => userPlant.plant));  // Set the plants in state
+      } catch (error) {
+        console.error('Error fetching plants:', error);
+      }
     };
-    fetchUserPlants();
-  }, [userId]);
+
+    if (user) {
+      fetchUserPlants();
+    }
+  }, [user, loading, navigate]);  // Only fetch plants when the user is available
 
   const handleDeletePlant = async (plantId) => {
+    const token = localStorage.getItem('token');  // Retrieve the JWT token for deletion request
+
     try {
-      await fetch(`http://localhost:5000/api/userPlants/users/${userId}/plants/${plantId}`, {
+      await fetch(`http://localhost:5000/api/userPlants/${plantId}`, {
         method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,  // Send the JWT token for the deletion request
+        },
       });
       setPlants(plants.filter(plant => plant.id !== plantId));  // Remove deleted plant from state
     } catch (error) {
@@ -27,10 +57,15 @@ const GardenView = () => {
   };
 
   const handleUpdatePlant = async (plantId, updatedData) => {
+    const token = localStorage.getItem('token');  // Retrieve the JWT token for update request
+
     try {
-      const response = await fetch(`http://localhost:5000/api/userPlants/users/${userId}/plants/${plantId}`, {
+      const response = await fetch(`http://localhost:5000/api/userPlants/${plantId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,  // Send the JWT token for the update request
+        },
         body: JSON.stringify(updatedData),
       });
       const updatedPlant = await response.json();
@@ -39,6 +74,14 @@ const GardenView = () => {
       console.error('Error updating plant:', error);
     }
   };
+
+  if (loading) {
+    return <p>Loading...</p>;  // Show loading message while checking authentication
+  }
+
+  if (error) {
+    return <p>{error}</p>;  // Display error if any
+  }
 
   return (
     <div>
