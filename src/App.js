@@ -1,11 +1,11 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
+import Register from './pages/Register'; // Import Register component
 import GardenView from './pages/GardenView';
 import PlantView from './pages/PlantView';
-import { UserProvider } from './contexts/UserContext'; // Import UserContext
-import ProtectedRoute from './components/ProtectedRoute'; // Import ProtectedRoute
+import { UserProvider } from './contexts/UserContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -13,10 +13,8 @@ function App() {
       <Router>
         <div>
           <Routes>
-            {/* Public route */}
             <Route path="/" element={<Login />} />
-            
-            {/* Protected routes */}
+            <Route path="/register" element={<Register />} /> {/* New registration route */}
             <Route
               path="/garden"
               element={
