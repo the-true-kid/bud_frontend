@@ -7,7 +7,6 @@ import Login from './pages/Login';  // Login is small, no need to lazy load
 // Lazy load other components for better performance
 const Register = React.lazy(() => import('./pages/Register'));
 const GardenView = React.lazy(() => import('./pages/GardenView'));
-const PlantView = React.lazy(() => import('./pages/PlantView'));
 const NotFound = React.lazy(() => import('./pages/NotFound'));  // 404 page
 
 function App() {
@@ -26,14 +25,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/plant/:plantId"
-              element={
-                <ProtectedRoute>
-                  <PlantView />
-                </ProtectedRoute>
-              }
-            />
+           
             {/* Add a 404 Not Found route */}
             <Route path="*" element={<NotFound />} />
           </Routes>

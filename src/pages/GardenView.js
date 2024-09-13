@@ -2,24 +2,18 @@ import React, { useState, useEffect, useContext } from 'react';
 import SearchBar from '../components/SearchBar';
 import PlantList from '../components/PlantList';
 import { UserContext } from '../contexts/UserContext';
-import { useNavigate } from 'react-router-dom';
 import { fetchUserPlants, deletePlant, updatePlant } from '../services/plantService';
 import { getToken } from '../utils/token';
+import { addPlant } from '../services/plantService';
+
 
 const GardenView = () => {
   const [plants, setPlants] = useState([]);
   const { user, loading } = useContext(UserContext);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/login');
-      return;
-    }
-
     const token = getToken();
     if (!token) {
-      navigate('/login');
       return;
     }
 
@@ -38,14 +32,29 @@ const GardenView = () => {
     if (user) {
       loadPlants();
     }
-  }, [user, loading, navigate]);
+  }, [user, loading]);
 
-  const handleAddPlant = (newPlant) => {
-    setPlants(prevPlants => [
-      ...prevPlants,
-      { ...newPlant, name: newPlant.plant.name },
-    ]);
+  const handleAddPlant = async (newPlantData) => {
+    const token = getToken();
+    if (!token) {
+      console.error('No token found');
+      return;
+    }
+  
+    try {
+      const newPlant = await addPlant(newPlantData, token);  // Call the service
+      setPlants((prevPlants) => [
+        ...prevPlants,
+        {
+          ...newPlant,
+          name: newPlant.plant ? newPlant.plant.name : 'Unnamed Plant', // Ensure name exists
+        },
+      ]);
+    } catch (error) {
+      console.error('Error adding plant:', error);
+    }
   };
+  
 
   const handleDeletePlant = async (plantId) => {
     const token = getToken();
@@ -75,10 +84,9 @@ const GardenView = () => {
       <h1>My Garden</h1>
       <SearchBar onAddPlant={handleAddPlant} />
       <PlantList 
-        plants={plants} 
-        navigate={navigate} 
-        handleDeletePlant={handleDeletePlant} 
-        handleUpdatePlant={handleUpdatePlant} 
+        plants={plants}
+        handleDeletePlant={handleDeletePlant}
+        handleUpdatePlant={handleUpdatePlant}
       />
     </div>
   );
