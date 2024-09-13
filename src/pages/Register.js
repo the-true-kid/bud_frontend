@@ -54,6 +54,11 @@ const Register = () => {
     }
   };
 
+  // Function to navigate back to login page
+  const handleBackToLogin = () => {
+    navigate('/'); // Assuming '/' is your login page route
+  };
+
   return (
     <div>
       <h1>Register</h1>
@@ -63,6 +68,8 @@ const Register = () => {
       <InputField label="Confirm Password" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
       <InputField label="Location" value={location} onChange={e => setLocation(e.target.value)} />
       <Button label="Register" onClick={handleRegister} />
+      {/* Add a button to go back to the login page */}
+      <Button label="Back to Login" onClick={handleBackToLogin} />
     </div>
   );
 };

@@ -14,9 +14,9 @@ const PlantCard = ({ plant, onClick, onDelete, onUpdate }) => {
     const updatedData = {
       nickname: nickname,
       watering_interval: wateringInterval,
-      last_watered: new Date(), // or other updated fields
+      last_watered: new Date(),  // or other updated fields
     };
-    onUpdate(plant.id, updatedData);  // Pass updated data to parent component
+    onUpdate(plant.plant_id, updatedData);  // Pass updated data to parent component
     setIsEditing(false);  // Exit editing mode
   };
 
@@ -51,7 +51,7 @@ const PlantCard = ({ plant, onClick, onDelete, onUpdate }) => {
       <button onClick={handleEditClick}>
         {isEditing ? 'Cancel' : 'Edit'}
       </button>
-      <button onClick={() => onDelete(plant.id)}>Delete</button>
+      <button onClick={() => onDelete(plant.plant_id)}>Delete</button>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-// src/pages/Login.js
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../contexts/UserContext'; // Import UserContext for login state
@@ -28,12 +27,19 @@ const Login = () => {
     }
   };
 
+  // Function to navigate to the new user registration page
+  const handleCreateNewUser = () => {
+    navigate('/register'); // Assuming '/register' is the route for creating a new user
+  };
+
   return (
     <div>
       <h1>Login</h1>
       <InputField label="Email" value={email} onChange={e => setEmail(e.target.value)} />
       <InputField label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
       <Button label={loading ? 'Logging in...' : 'Login'} onClick={handleLogin} disabled={loading} /> {/* Disable button during loading */}
+      {/* Add a button to navigate to create a new user */}
+      <Button label="Create New User" onClick={handleCreateNewUser} />
     </div>
   );
 };
