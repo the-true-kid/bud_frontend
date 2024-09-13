@@ -5,6 +5,7 @@ const PlantCard = ({ plant, onClick, onDelete, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [nickname, setNickname] = useState(plant.nickname);
   const [wateringInterval, setWateringInterval] = useState(plant.watering_interval);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);  // Toggle editing mode
@@ -20,9 +21,17 @@ const PlantCard = ({ plant, onClick, onDelete, onUpdate }) => {
     setIsEditing(false);  // Exit editing mode
   };
 
+  const handleModalClose = () => {
+    setIsModalOpen(false);  // Close modal
+  };
+
   return (
     <div className="plant-card">
-      <img src={plant.imgSrc} alt={plant.name} onClick={onClick} />
+      <img 
+        src={plant.imgSrc} 
+        alt={plant.name} 
+        onClick={() => setIsModalOpen(true)} // Open modal when clicked
+      />
       <h3>{plant.name}</h3>
       
       {isEditing ? (
@@ -52,6 +61,20 @@ const PlantCard = ({ plant, onClick, onDelete, onUpdate }) => {
         {isEditing ? 'Cancel' : 'Edit'}
       </button>
       <button onClick={() => onDelete(plant.plant_id)}>Delete</button>
+
+      {/* Modal for plant details */}
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close-button" onClick={handleModalClose}>&times;</span>
+            <h2>{plant.name} Details</h2>
+            <img src={plant.imgSrc} alt={plant.name} />
+            <p>Nickname: {plant.nickname}</p>
+            <p>Watering Interval: {plant.watering_interval} days</p>
+            <p>Other plant details here...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
