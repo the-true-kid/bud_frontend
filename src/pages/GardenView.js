@@ -3,13 +3,10 @@ import SearchBar from '../components/SearchBar';
 import PlantList from '../components/PlantList';
 import { UserContext } from '../contexts/UserContext';
 import usePlants from '../hooks/usePlants';
-import PlantManager from '../components/PlantManager';
-
 
 const GardenView = () => {
   const { user, loading } = useContext(UserContext);
-  const { plants, setPlants, error } = usePlants(user);  // Use the custom hook
-  const { handleAddPlant, handleDeletePlant, handleUpdatePlant } = PlantManager({ plants, setPlants });
+  const { userPlants, error, handleAddPlant, handleDeletePlant, handleUpdatePlant } = usePlants(user);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -19,12 +16,15 @@ const GardenView = () => {
     return <p>{error}</p>;
   }
 
+  // Log the plants being passed to PlantList
+  console.log("User Plants in GardenView:", userPlants);
+
   return (
     <div>
       <h1>My Garden</h1>
-      <SearchBar onAddPlant={handleAddPlant} />
+      <SearchBar user={user} onAddPlant={handleAddPlant} /> 
       <PlantList 
-        plants={plants}
+        userPlants={userPlants}  // Pass userPlants correctly
         handleDeletePlant={handleDeletePlant}
         handleUpdatePlant={handleUpdatePlant}
       />

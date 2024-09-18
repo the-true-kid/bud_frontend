@@ -1,38 +1,26 @@
 import React, { useState } from 'react';
 import './PlantCard.css';
 
-const PlantCard = ({ plant, onClick, onDelete, onUpdate }) => {
+const PlantCard = ({ userPlant, onDelete, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [nickname, setNickname] = useState(plant.nickname);
-  const [wateringInterval, setWateringInterval] = useState(plant.watering_interval);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
-
-  const handleEditClick = () => {
-    setIsEditing(!isEditing);  // Toggle editing mode
-  };
+  const [nickname, setNickname] = useState(userPlant.nickname || 'No nickname');
+  const [wateringInterval, setWateringInterval] = useState(userPlant.watering_interval || 7);
 
   const handleUpdate = () => {
     const updatedData = {
-      nickname: nickname,
+      nickname,
       watering_interval: wateringInterval,
-      last_watered: new Date(),  // or other updated fields
+      last_watered: new Date(),
     };
-    onUpdate(plant.plant_id, updatedData);  // Pass updated data to parent component
+    onUpdate(userPlant.plant_id, updatedData);  // Trigger the update
     setIsEditing(false);  // Exit editing mode
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);  // Close modal
   };
 
   return (
     <div className="plant-card">
-      <img 
-        src={plant.imgSrc} 
-        alt={plant.name} 
-        onClick={() => setIsModalOpen(true)} // Open modal when clicked
-      />
-      <h3>{plant.name}</h3>
+      <h3>{userPlant.name || 'Unnamed Plant'}</h3>
+      <p>Nickname: {nickname}</p>
+      <p>Watering Interval: {wateringInterval} days</p>
       
       {isEditing ? (
         <div>
@@ -51,30 +39,10 @@ const PlantCard = ({ plant, onClick, onDelete, onUpdate }) => {
           <button onClick={handleUpdate}>Save</button>
         </div>
       ) : (
-        <div>
-          <p>Nickname: {plant.nickname}</p>
-          <p>Watering Interval: {plant.watering_interval} days</p>
-        </div>
+        <button onClick={() => setIsEditing(true)}>Edit</button>
       )}
       
-      <button onClick={handleEditClick}>
-        {isEditing ? 'Cancel' : 'Edit'}
-      </button>
-      <button onClick={() => onDelete(plant.plant_id)}>Delete</button>
-
-      {/* Modal for plant details */}
-      {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close-button" onClick={handleModalClose}>&times;</span>
-            <h2>{plant.name} Details</h2>
-            <img src={plant.imgSrc} alt={plant.name} />
-            <p>Nickname: {plant.nickname}</p>
-            <p>Watering Interval: {plant.watering_interval} days</p>
-            <p>Other plant details here...</p>
-          </div>
-        </div>
-      )}
+      <button onClick={() => onDelete(userPlant.plant_id)}>Delete</button>
     </div>
   );
 };
