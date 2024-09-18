@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchUserPlants } from '../services/plantService';  // Ensure this fetches user plants from the backend
-import { getToken } from '../utils/token';
+import { fetchUserPlants, deletePlant, updatePlant, addPlant } from '../services/userPlantService';  // Updated function names
 
 const usePlants = (user) => {
   const [userPlants, setUserPlants] = useState([]);
@@ -8,45 +7,64 @@ const usePlants = (user) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const token = getToken();  // Get the auth token
-    if (!token) {
-      setError('No token found');
-      setLoading(false);
-      return;
-    }
+    if (!user) return;
 
     const loadUserPlants = async () => {
       try {
-        console.log("Fetching user plants...");
-        const data = await fetchUserPlants(token);  // Fetch user plants from the backend
-        console.log('Fetched user plants from backend:', data);  // Log the raw data
-        
+        setLoading(true);
+        const data = await fetchUserPlants();  // Updated function name
         if (data && Array.isArray(data)) {
-          // Map over data to ensure the plant object contains 'name' and is processed correctly
-          const formattedData = data.map(userPlant => ({
+          setUserPlants(data.map(userPlant => ({
             ...userPlant,
             name: userPlant.plant?.name || 'Unnamed Plant',  // Add fallback for name
-          }));
-          setUserPlants(formattedData);  // Update the userPlants state
+          })));
         } else {
-          setError('Invalid data format received');
+          throw new Error('Invalid data format');
         }
-
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching user plants:', error);
+      } catch (err) {
+        console.error('Error fetching user plants:', err);
         setError('Error fetching user plants');
+      } finally {
         setLoading(false);
       }
     };
 
-    if (user) {
-      loadUserPlants();  // Fetch plants if the user exists
-    }
+    loadUserPlants();
   }, [user]);
 
-  return { userPlants, loading, error, setUserPlants };
+  const handleDeletePlant = async (plantId) => {
+    try {
+      await deletePlant(plantId);  // Updated function name
+      setUserPlants((prevPlants) => prevPlants.filter((plant) => plant.plant_id !== plantId));
+    } catch (err) {
+      console.error(`Failed to delete plant with ID: ${plantId}`, err);
+      setError('Failed to delete plant');
+    }
+  };
+
+  const handleUpdatePlant = async (plantId, updatedData) => {
+    try {
+      const updatedPlant = await updatePlant(plantId, updatedData);  // Updated function name
+      setUserPlants((prevPlants) =>
+        prevPlants.map((plant) => (plant.plant_id === plantId ? { ...plant, ...updatedPlant } : plant))
+      );
+    } catch (err) {
+      console.error(`Failed to update plant with ID: ${plantId}`, err);
+      setError('Failed to update plant');
+    }
+  };
+
+  const handleAddPlant = async (plantId) => {
+    try {
+      const newPlant = await addPlant({ plant_id: plantId });  // Updated function name
+      setUserPlants((prevPlants) => [...prevPlants, newPlant]);
+    } catch (err) {
+      console.error(`Failed to add plant with ID: ${plantId}`, err);
+      setError('Failed to add plant');
+    }
+  };
+
+  return { userPlants, loading, error, handleDeletePlant, handleUpdatePlant, handleAddPlant };
 };
 
 export default usePlants;
-
