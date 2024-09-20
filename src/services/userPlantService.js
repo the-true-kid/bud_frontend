@@ -1,10 +1,9 @@
-// userPlantService.js
-
 import { getToken } from '../utils/token';
 
 // Fetch user plants
 export const fetchUserPlants = async () => {
   const token = getToken();
+  console.log("Token:", token);  // Debugging log
   if (!token) throw new Error('No token found');
 
   try {
@@ -14,15 +13,19 @@ export const fetchUserPlants = async () => {
       },
     });
 
+    console.log("Response status:", response.status);  // Debugging log
+
     if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Error response body:", errorResponse);  // Debugging log
       throw new Error(`Failed to fetch user plants: ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log("Fetched user plants:", data);
+    console.log("Fetched user plants:", data);  // Debugging log
     return data;
   } catch (error) {
-    console.error("Error in fetchUserPlants:", error);
+    console.error("Error in fetchUserPlants:", error);  // Debugging log
     throw error;
   }
 };
@@ -30,6 +33,7 @@ export const fetchUserPlants = async () => {
 // Delete plant by plantId
 export const deletePlant = async (plantId) => {
   const token = getToken();
+  console.log("Token:", token);  // Debugging log
   if (!token) throw new Error('No token found');
 
   try {
@@ -40,13 +44,17 @@ export const deletePlant = async (plantId) => {
       },
     });
 
+    console.log("Response status:", response.status);  // Debugging log
+
     if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Error response body:", errorResponse);  // Debugging log
       throw new Error(`Failed to delete plant: ${response.statusText}`);
     }
 
-    console.log(`Deleted plant with ID: ${plantId}`);
+    console.log(`Deleted plant with ID: ${plantId}`);  // Debugging log
   } catch (error) {
-    console.error("Error in deletePlant:", error);
+    console.error("Error in deletePlant:", error);  // Debugging log
     throw error;
   }
 };
@@ -54,6 +62,8 @@ export const deletePlant = async (plantId) => {
 // Update plant by plantId with updatedData
 export const updatePlant = async (plantId, updatedData) => {
   const token = getToken();
+  console.log("Token:", token);  // Debugging log
+  console.log("Updating plant with data:", updatedData);  // Debugging log
   if (!token) throw new Error('No token found');
 
   try {
@@ -66,15 +76,19 @@ export const updatePlant = async (plantId, updatedData) => {
       body: JSON.stringify(updatedData),
     });
 
+    console.log("Response status:", response.status);  // Debugging log
+
     if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Error response body:", errorResponse);  // Debugging log
       throw new Error(`Failed to update plant: ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log("Updated plant:", data);
+    console.log("Updated plant:", data);  // Debugging log
     return data;
   } catch (error) {
-    console.error("Error in updatePlant:", error);
+    console.error("Error in updatePlant:", error);  // Debugging log
     throw error;
   }
 };
@@ -82,6 +96,8 @@ export const updatePlant = async (plantId, updatedData) => {
 // Add new plant
 export const addPlant = async (newPlantData) => {
   const token = getToken();
+  console.log("Token:", token);  // Debugging log
+  console.log("Adding new plant with data:", newPlantData);  // Debugging log
   if (!token) throw new Error('No token found');
 
   try {
@@ -94,15 +110,19 @@ export const addPlant = async (newPlantData) => {
       body: JSON.stringify(newPlantData),
     });
 
+    console.log("Response status:", response.status);  // Debugging log
+
     if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Error response body:", errorResponse);  // Debugging log
       throw new Error(`Failed to add plant: ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log("Added new plant:", data);
+    console.log("Added new plant:", data);  // Debugging log
     return data;
   } catch (error) {
-    console.error("Error in addPlant:", error);
+    console.error("Error in addPlant:", error);  // Debugging log
     throw error;
   }
 };
