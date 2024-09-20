@@ -21,8 +21,13 @@ const usePlants = (user) => {
         if (data && Array.isArray(data)) {
           setUserPlants(
             data.map(userPlant => ({
-              ...userPlant,
-              name: userPlant.plant?.name || 'Unnamed Plant',  // Add fallback for name
+              ...userPlant,  // Spread the UserPlant fields
+              name: userPlant.plant?.name || 'Unnamed Plant',  // Plant name fallback
+              scientificName: userPlant.plant?.scientific_name || 'Unknown scientific name',  // Scientific name fallback
+              careInfo: userPlant.plant?.care_info || 'No care info available',  // Care info fallback
+              imageUrl: userPlant.plant?.image_url || '',  // Image URL fallback
+              wateringInterval: userPlant.watering_interval || 'Not set',  // Watering interval fallback
+              nickname: userPlant.nickname || 'No nickname',  // Nickname fallback
             }))
           );
         } else {
@@ -89,7 +94,12 @@ const usePlants = (user) => {
       const newPlant = await addPlant({ plant_id: plantId });
       console.log('Newly added plant:', newPlant);  // Debugging log
 
-      setUserPlants((prevPlants) => [...prevPlants, newPlant]);
+      // Refetch the updated list of user plants to reflect the addition
+      const updatedUserPlants = await fetchUserPlants();
+      console.log('Fetched updated user plants after adding:', updatedUserPlants);  // Debugging log
+
+      // Update the state with the new plant list
+      setUserPlants(updatedUserPlants);
 
       console.log(`Successfully added plant with ID: ${plantId}`);  // Debugging log
     } catch (err) {
