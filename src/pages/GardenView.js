@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import PlantList from '../components/PlantList';
-import AddPlantForm from '../components/AddPlantForm'; // Import the new AddPlantForm component
+import AddPlantForm from '../components/AddPlantForm';
 import { UserContext } from '../contexts/UserContext';
 import usePlants from '../hooks/usePlants';
 
 const GardenView = () => {
   const { user, loading } = useContext(UserContext);
-  const { userPlants, error, handleAddPlant, handleDeletePlant, handleUpdatePlant } = usePlants(user);
+  const { userPlants, plants, error, handleAddPlant, handleDeletePlant, handleUpdatePlant } = usePlants(user);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -16,19 +16,14 @@ const GardenView = () => {
     return <p>{error}</p>;
   }
 
-  // Log the plants being passed to PlantList for debugging
-  console.log("User Plants in GardenView:", userPlants);
-
   return (
     <div>
       <h1>My Garden</h1>
       
-      {/* AddPlantForm for adding new plants */}
-      <AddPlantForm handleAddPlant={handleAddPlant} />
+      <AddPlantForm handleAddPlant={handleAddPlant} plants={plants} /> {/* Pass plants here */}
 
-      {/* PlantList to display the user's plants */}
       <PlantList 
-        userPlants={userPlants}  // Pass userPlants correctly
+        userPlants={userPlants} 
         handleDeletePlant={handleDeletePlant}
         handleUpdatePlant={handleUpdatePlant}
       />

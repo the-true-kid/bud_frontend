@@ -14,7 +14,7 @@ const PlantCard = ({ userPlant, onDelete, onUpdate }) => {
       watering_interval: wateringInterval,
       size,
       location,
-      last_watered: new Date(),  // Optional: you can track last watered here
+      last_watered: new Date(),  // Optional: Track last watered here
     };
     onUpdate(userPlant.id, updatedData);  // Trigger the update using userPlant.id
     setIsEditing(false);  // Exit editing mode
@@ -22,11 +22,11 @@ const PlantCard = ({ userPlant, onDelete, onUpdate }) => {
 
   return (
     <div className="plant-card">
-      <h3>{userPlant.name || 'Unnamed Plant'}</h3>
+      <h3>{userPlant.plantName || 'Unnamed Plant'}</h3> {/* Display the plant name */}
       <p>Nickname: {nickname}</p>
       <p>Watering Interval: {wateringInterval} days</p>
-      <p>Size: {size}</p>
-      <p>Location: {location}</p>
+      <p>Size: {size || 'Not specified'}</p>
+      <p>Location: {location || 'Not specified'}</p>
       
       {isEditing ? (
         <div>

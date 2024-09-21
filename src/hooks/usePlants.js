@@ -1,66 +1,51 @@
 import { useState, useEffect } from 'react';
-import { fetchUserPlants, deletePlant, updatePlant, addPlant } from '../services/userPlantService';  // Updated function names
+import { fetchUserPlants, deletePlant, updatePlant, addPlant } from '../services/userPlantService';
+import { fetchAllPlants, fetchPlantById } from '../services/plantService'; // Import additional functions
 
 const usePlants = (user) => {
   const [userPlants, setUserPlants] = useState([]);
+  const [plants, setPlants] = useState([]); // State for available plants
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch user plants when the user changes
+  // Fetch user plants and available plants when the user changes
   useEffect(() => {
     if (!user) return;
 
-    const loadUserPlants = async () => {
+    const loadPlants = async () => {
       try {
         setLoading(true);
         console.log('Fetching user plants for user:', user);  // Debugging log
 
-        const data = await fetchUserPlants();
-        console.log('Fetched user plants data:', data);  // Debugging log
+        const userPlantsData = await fetchUserPlants();
+        
+        // Enrich user plants with plant names
+        const enrichedUserPlants = await Promise.all(userPlantsData.map(async (userPlant) => {
+          const plantDetails = await fetchPlantById(userPlant.plant_id); // Fetch plant details
+          return {
+            ...userPlant,
+            plantName: plantDetails.name || 'Unnamed Plant', // Use the plant name or a fallback
+          };
+        }));
 
-        if (data && Array.isArray(data)) {
-          setUserPlants(
-            data.map(userPlant => ({
-              ...userPlant,  // Spread the UserPlant fields
-              name: userPlant.plant?.name || 'Unnamed Plant',  // Plant name fallback
-              scientificName: userPlant.plant?.scientific_name || 'Unknown scientific name',  // Scientific name fallback
-              careInfo: userPlant.plant?.care_info || 'No care info available',  // Care info fallback
-              imageUrl: userPlant.plant?.image_url || '',  // Image URL fallback
-              wateringInterval: userPlant.watering_interval || 'Not set',  // Watering interval fallback
-              nickname: userPlant.nickname || 'No nickname',  // Nickname fallback
-            }))
-          );
-        } else {
-          throw new Error('Invalid data format');
-        }
+        console.log('Fetched user plants data:', enrichedUserPlants);  // Debugging log
+        setUserPlants(enrichedUserPlants);
+
+        const allPlantsData = await fetchAllPlants();
+        console.log('Fetched all plants data:', allPlantsData);  // Debugging log
+        setPlants(allPlantsData); // Set available plants
+
       } catch (err) {
-        console.error('Error fetching user plants:', err);  // Debugging log
-        setError('Error fetching user plants');
+        console.error('Error fetching plants:', err);  // Debugging log
+        setError('Error fetching plants');
       } finally {
         setLoading(false);
-        console.log('Finished fetching user plants');  // Debugging log
+        console.log('Finished fetching plants');  // Debugging log
       }
     };
 
-    loadUserPlants();
+    loadPlants();
   }, [user]);
-
-  // Handle deleting a plant
-  const handleDeletePlant = async (userPlantId) => {
-    try {
-      console.log(`Attempting to delete plant with user_plant ID: ${userPlantId}`);  // Debugging log
-
-      await deletePlant(userPlantId);
-      setUserPlants((prevPlants) =>
-        prevPlants.filter((plant) => plant.id !== userPlantId)  // Filter by user_plant.id
-      );
-
-      console.log(`Deleted plant with user_plant ID: ${userPlantId}`);  // Debugging log
-    } catch (err) {
-      console.error(`Failed to delete plant with user_plant ID: ${userPlantId}`, err);  // Debugging log
-      setError('Failed to delete plant');
-    }
-  };
 
   // Handle updating a plant
   const handleUpdatePlant = async (userPlantId, updatedData) => {
@@ -68,9 +53,12 @@ const usePlants = (user) => {
       console.log(`Attempting to update plant with user_plant ID: ${userPlantId}`, updatedData);  // Debugging log
 
       const updatedPlant = await updatePlant(userPlantId, updatedData);
+      const plantDetails = await fetchPlantById(updatedPlant.plant_id); // Fetch the plant name
+
       setUserPlants((prevPlants) =>
         prevPlants.map((plant) =>
-          plant.id === userPlantId ? { ...plant, ...updatedPlant } : plant  // Use user_plant.id for comparison
+          plant.id === userPlantId 
+            ? { ...plant, ...updatedPlant, plantName: plantDetails.name } : plant // Include the plant name
         )
       );
 
@@ -81,38 +69,59 @@ const usePlants = (user) => {
     }
   };
 
+  // Handle adding a new plant
   const handleAddPlant = async (plantId, nickname, size, location, wateringInterval) => {
     try {
       console.log(`Attempting to add plant with ID: ${plantId}`);  // Debugging log
-  
+
       if (!plantId || typeof plantId === 'undefined') {
         throw new Error('Invalid or undefined plant ID');  // Early error if plantId is invalid
       }
-  
-      // Add the plant with the extra details
+
       const newUserPlant = await addPlant({
         plant_id: plantId,
-        nickname,
-        size,
-        location,
-        watering_interval: wateringInterval,
+        nickname: nickname || "Unnamed Plant",
+        size: size || "Medium",
+        location: location || "Unknown Location",
+        watering_interval: wateringInterval || 7,
       });
-  
+
+      const plantDetails = await fetchPlantById(plantId); // Fetch the plant name
+
       console.log('Newly added plant:', newUserPlant);  // Debugging log
-  
-      // Append the new userPlant to the current list of user plants
-      setUserPlants((prevPlants) => [...prevPlants, newUserPlant]);
-  
+
+      setUserPlants((prevPlants) => [
+        ...prevPlants,
+        { ...newUserPlant, plantName: plantDetails.name } // Include the plant name
+      ]);
+
       console.log(`Successfully added plant with user_plant ID: ${newUserPlant.id}`);  // Debugging log
     } catch (err) {
       console.error(`Failed to add plant with plant ID: ${plantId}`, err);  // Debugging log
       setError('Failed to add plant');
     }
   };
-  
+
+  // Handle deleting a plant
+  const handleDeletePlant = async (userPlantId) => {
+    try {
+      console.log(`Attempting to delete plant with user_plant ID: ${userPlantId}`);  // Debugging log
+
+      await deletePlant(userPlantId);
+      setUserPlants((prevPlants) =>
+        prevPlants.filter((plant) => plant.id !== userPlantId)
+      );
+
+      console.log(`Deleted plant with user_plant ID: ${userPlantId}`);  // Debugging log
+    } catch (err) {
+      console.error(`Failed to delete plant with user_plant ID: ${userPlantId}`, err);  // Debugging log
+      setError('Failed to delete plant');
+    }
+  };
 
   return {
     userPlants,
+    plants,  // Return the plants array
     loading,
     error,
     handleDeletePlant,

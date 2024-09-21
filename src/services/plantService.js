@@ -1,4 +1,4 @@
-import { getToken } from '../utils/token';  // Ensure you are importing getToken correctly
+import { getToken } from '../utils/token';
 
 // Fetch all plants from the backend
 export const fetchAllPlants = async () => {
@@ -55,4 +55,3 @@ export const fetchPlantById = async (plantId) => {
     throw error;
   }
 };
-

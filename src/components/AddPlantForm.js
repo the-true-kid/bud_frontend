@@ -1,40 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { fetchAllPlants } from '../services/plantService'; // Use the existing service
+import React, { useState } from 'react';
 
-const AddPlantForm = ({ handleAddPlant }) => {
+const AddPlantForm = ({ handleAddPlant, plants }) => {
   const [plantId, setPlantId] = useState('');
-  const [plants, setPlants] = useState([]);
   const [nickname, setNickname] = useState('');
   const [size, setSize] = useState('');
   const [location, setLocation] = useState('');
   const [wateringInterval, setWateringInterval] = useState(7);
 
-  // Fetch plants on mount
-  useEffect(() => {
-    const loadPlants = async () => {
-      const plantData = await fetchAllPlants(); // Use existing service to fetch the plants
-      setPlants(plantData);
-    };
-    loadPlants();
-  }, []);
-
-  const handlePlantSelection = (e) => {
-    const selectedPlantId = e.target.value;
-    const selectedPlant = plants.find((plant) => plant.id === Number(selectedPlantId));
-    setPlantId(selectedPlantId);
-    setWateringInterval(selectedPlant?.watering_interval || 7); // Default watering interval or plant data
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleAddPlant(plantId, nickname, size, location, wateringInterval); // Pass data to handleAddPlant
+    
+    const plantData = {
+      plant_id: Number(plantId),  // Ensure this is a number
+      nickname: nickname || "Unnamed Plant",
+      size: size || "Medium",
+      location: location || "Unknown Location",
+      watering_interval: wateringInterval || 7
+    };
+    
+    console.log("Adding new plant with data:", plantData);
+    
+    handleAddPlant(
+      plantData.plant_id,
+      plantData.nickname,
+      plantData.size,
+      plantData.location,
+      plantData.watering_interval
+    );
+    
+    // Reset the form
+    setPlantId('');
+    setNickname('');
+    setSize('');
+    setLocation('');
+    setWateringInterval(7);
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <div>
         <label>Select Plant:</label>
-        <select value={plantId} onChange={handlePlantSelection} required>
+        <select value={plantId} onChange={(e) => setPlantId(e.target.value)} required>
           <option value="" disabled>Select a plant</option>
           {plants.map((plant) => (
             <option key={plant.id} value={plant.id}>
@@ -43,37 +49,44 @@ const AddPlantForm = ({ handleAddPlant }) => {
           ))}
         </select>
       </div>
-      
-      {plantId && (
-        <>
-          <h3>Selected Plant: {plants.find(plant => plant.id === Number(plantId))?.name}</h3>
-          <p>Default Watering Interval: {wateringInterval} days</p>
-        </>
-      )}
 
-      {/* Optional custom fields */}
       <div>
         <label>Nickname:</label>
         <input
           type="text"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
+          placeholder="Enter plant nickname"
         />
       </div>
+
       <div>
         <label>Size:</label>
         <input
           type="text"
           value={size}
           onChange={(e) => setSize(e.target.value)}
+          placeholder="Enter plant size"
         />
       </div>
+
       <div>
         <label>Location:</label>
         <input
           type="text"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
+          placeholder="Enter plant location"
+        />
+      </div>
+
+      <div>
+        <label>Watering Interval (days):</label>
+        <input
+          type="number"
+          value={wateringInterval}
+          onChange={(e) => setWateringInterval(parseInt(e.target.value, 10))}
+          placeholder="Enter watering interval (days)"
         />
       </div>
 
@@ -83,3 +96,4 @@ const AddPlantForm = ({ handleAddPlant }) => {
 };
 
 export default AddPlantForm;
+

@@ -1,4 +1,4 @@
-import { getToken } from '../utils/token';
+import { getToken } from '../utils/token';  // Ensure you are importing getToken correctly
 
 // Fetch user plants
 export const fetchUserPlants = async () => {
