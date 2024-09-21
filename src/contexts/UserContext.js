@@ -4,15 +4,15 @@ export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [error, setError] = useState(null); // Add error state
+  const [loading, setLoading] = useState(true);  // Loading state for app initialization
+  const [error, setError] = useState(null);  // Error state for login and token issues
 
   // Check if the token exists in localStorage when the app loads
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Fetch user data with the token
-      fetch('http://localhost:5000/api/users/getUser', {  // Corrected URL path
+      // Fetch user data using the token
+      fetch('http://localhost:5000/api/users/getUser', {  // Correct path to fetch user data
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -24,25 +24,25 @@ export const UserProvider = ({ children }) => {
           return response.json();
         })
         .then(data => {
-          if (data && data.id) {  // Check if user data is valid
-            setUser(data); // Set the user if the token is valid
+          if (data && data.id) {  // Ensure valid user data is returned
+            setUser(data);  // Set user state
           }
         })
         .catch(error => {
           console.error('Failed to fetch user:', error);
           setError(error.message);
-          logout(); // Automatically log out if token is invalid
+          logout();  // Logout if the token is invalid
         })
-        .finally(() => setLoading(false));  // Stop loading
+        .finally(() => setLoading(false));  // Stop loading after check
     } else {
-      setLoading(false);  // No token, stop loading
+      setLoading(false);  // No token found, stop loading
     }
   }, []);
 
   // Login function
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:5000/api/login', {  // Use full URL
+      const response = await fetch('http://localhost:5000/api/login', {  // Login route matches backend
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -50,24 +50,25 @@ export const UserProvider = ({ children }) => {
 
       const data = await response.json();
       if (response.ok) {
-        localStorage.setItem('token', data.token); // Store the JWT token
-        setUser(data.user); // Set the user in state
+        localStorage.setItem('token', data.token);  // Store JWT token in localStorage
+        setUser(data.user);  // Set user data in state
+        setError(null);  // Clear any previous errors
         return true;
       } else {
-        setError('Login failed'); // Handle login failure
-        return false; 
+        setError('Login failed');  // Show error message for failed login
+        return false;
       }
     } catch (error) {
       console.error('Login failed:', error);
-      setError('Login failed'); // Set error state
+      setError('Login failed');  // Set error message for failure
       return false;
     }
   };
 
   // Logout function
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('token'); // Remove token from localStorage
+    setUser(null);  // Clear user data from state
+    localStorage.removeItem('token');  // Remove token from localStorage
   };
 
   return (

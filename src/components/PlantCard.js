@@ -5,12 +5,16 @@ const PlantCard = ({ userPlant, onDelete, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [nickname, setNickname] = useState(userPlant.nickname || 'No nickname');
   const [wateringInterval, setWateringInterval] = useState(userPlant.watering_interval || 7);
+  const [size, setSize] = useState(userPlant.size || '');
+  const [location, setLocation] = useState(userPlant.location || '');
 
   const handleUpdate = () => {
     const updatedData = {
       nickname,
       watering_interval: wateringInterval,
-      last_watered: new Date(),
+      size,
+      location,
+      last_watered: new Date(),  // Optional: you can track last watered here
     };
     onUpdate(userPlant.id, updatedData);  // Trigger the update using userPlant.id
     setIsEditing(false);  // Exit editing mode
@@ -21,6 +25,8 @@ const PlantCard = ({ userPlant, onDelete, onUpdate }) => {
       <h3>{userPlant.name || 'Unnamed Plant'}</h3>
       <p>Nickname: {nickname}</p>
       <p>Watering Interval: {wateringInterval} days</p>
+      <p>Size: {size}</p>
+      <p>Location: {location}</p>
       
       {isEditing ? (
         <div>
@@ -35,6 +41,18 @@ const PlantCard = ({ userPlant, onDelete, onUpdate }) => {
             value={wateringInterval} 
             onChange={(e) => setWateringInterval(e.target.value)} 
             placeholder="Watering Interval" 
+          />
+          <input 
+            type="text" 
+            value={size} 
+            onChange={(e) => setSize(e.target.value)} 
+            placeholder="Size" 
+          />
+          <input 
+            type="text" 
+            value={location} 
+            onChange={(e) => setLocation(e.target.value)} 
+            placeholder="Location" 
           />
           <button onClick={handleUpdate}>Save</button>
         </div>

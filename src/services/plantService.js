@@ -1,9 +1,15 @@
-// plantService.js
+import { getToken } from '../utils/token';  // Ensure you are importing getToken correctly
 
 // Fetch all plants from the backend
-export const fetchAllPlants = async (token) => {
+export const fetchAllPlants = async () => {
+  const token = getToken();  // Retrieve token directly
+
+  if (!token) {
+    throw new Error('No token found');  // Handle missing token
+  }
+
   try {
-    const response = await fetch(`http://localhost:5000/api/plants`, {
+    const response = await fetch(`http://localhost:5000/api/plants/all`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -23,7 +29,13 @@ export const fetchAllPlants = async (token) => {
 };
 
 // Fetch plant by ID
-export const fetchPlantById = async (plantId, token) => {
+export const fetchPlantById = async (plantId) => {
+  const token = getToken();  // Retrieve token directly
+
+  if (!token) {
+    throw new Error('No token found');
+  }
+
   try {
     const response = await fetch(`http://localhost:5000/api/plants/${plantId}`, {
       headers: {
@@ -43,3 +55,4 @@ export const fetchPlantById = async (plantId, token) => {
     throw error;
   }
 };
+

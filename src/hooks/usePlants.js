@@ -81,27 +81,35 @@ const usePlants = (user) => {
     }
   };
 
-  // Handle adding a plant
-  const handleAddPlant = async (plantId) => {
+  const handleAddPlant = async (plantId, nickname, size, location, wateringInterval) => {
     try {
       console.log(`Attempting to add plant with ID: ${plantId}`);  // Debugging log
-
+  
       if (!plantId || typeof plantId === 'undefined') {
         throw new Error('Invalid or undefined plant ID');  // Early error if plantId is invalid
       }
-
-      const newUserPlant = await addPlant({ plant_id: plantId });
+  
+      // Add the plant with the extra details
+      const newUserPlant = await addPlant({
+        plant_id: plantId,
+        nickname,
+        size,
+        location,
+        watering_interval: wateringInterval,
+      });
+  
       console.log('Newly added plant:', newUserPlant);  // Debugging log
-
+  
       // Append the new userPlant to the current list of user plants
       setUserPlants((prevPlants) => [...prevPlants, newUserPlant]);
-
+  
       console.log(`Successfully added plant with user_plant ID: ${newUserPlant.id}`);  // Debugging log
     } catch (err) {
       console.error(`Failed to add plant with plant ID: ${plantId}`, err);  // Debugging log
       setError('Failed to add plant');
     }
   };
+  
 
   return {
     userPlants,
