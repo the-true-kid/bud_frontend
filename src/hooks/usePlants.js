@@ -46,37 +46,37 @@ const usePlants = (user) => {
   }, [user]);
 
   // Handle deleting a plant
-  const handleDeletePlant = async (plantId) => {
+  const handleDeletePlant = async (userPlantId) => {
     try {
-      console.log(`Attempting to delete plant with ID: ${plantId}`);  // Debugging log
+      console.log(`Attempting to delete plant with user_plant ID: ${userPlantId}`);  // Debugging log
 
-      await deletePlant(plantId);
+      await deletePlant(userPlantId);
       setUserPlants((prevPlants) =>
-        prevPlants.filter((plant) => plant.plant_id !== plantId)
+        prevPlants.filter((plant) => plant.id !== userPlantId)  // Filter by user_plant.id
       );
 
-      console.log(`Deleted plant with ID: ${plantId}`);  // Debugging log
+      console.log(`Deleted plant with user_plant ID: ${userPlantId}`);  // Debugging log
     } catch (err) {
-      console.error(`Failed to delete plant with ID: ${plantId}`, err);  // Debugging log
+      console.error(`Failed to delete plant with user_plant ID: ${userPlantId}`, err);  // Debugging log
       setError('Failed to delete plant');
     }
   };
 
   // Handle updating a plant
-  const handleUpdatePlant = async (plantId, updatedData) => {
+  const handleUpdatePlant = async (userPlantId, updatedData) => {
     try {
-      console.log(`Attempting to update plant with ID: ${plantId}`, updatedData);  // Debugging log
+      console.log(`Attempting to update plant with user_plant ID: ${userPlantId}`, updatedData);  // Debugging log
 
-      const updatedPlant = await updatePlant(plantId, updatedData);
+      const updatedPlant = await updatePlant(userPlantId, updatedData);
       setUserPlants((prevPlants) =>
         prevPlants.map((plant) =>
-          plant.plant_id === plantId ? { ...plant, ...updatedPlant } : plant
+          plant.id === userPlantId ? { ...plant, ...updatedPlant } : plant  // Use user_plant.id for comparison
         )
       );
 
-      console.log(`Updated plant with ID: ${plantId}`, updatedPlant);  // Debugging log
+      console.log(`Updated plant with user_plant ID: ${userPlantId}`, updatedPlant);  // Debugging log
     } catch (err) {
-      console.error(`Failed to update plant with ID: ${plantId}`, err);  // Debugging log
+      console.error(`Failed to update plant with user_plant ID: ${userPlantId}`, err);  // Debugging log
       setError('Failed to update plant');
     }
   };
@@ -86,24 +86,19 @@ const usePlants = (user) => {
     try {
       console.log(`Attempting to add plant with ID: ${plantId}`);  // Debugging log
 
-      // Ensure that plantId is valid
       if (!plantId || typeof plantId === 'undefined') {
         throw new Error('Invalid or undefined plant ID');  // Early error if plantId is invalid
       }
 
-      const newPlant = await addPlant({ plant_id: plantId });
-      console.log('Newly added plant:', newPlant);  // Debugging log
+      const newUserPlant = await addPlant({ plant_id: plantId });
+      console.log('Newly added plant:', newUserPlant);  // Debugging log
 
-      // Refetch the updated list of user plants to reflect the addition
-      const updatedUserPlants = await fetchUserPlants();
-      console.log('Fetched updated user plants after adding:', updatedUserPlants);  // Debugging log
+      // Append the new userPlant to the current list of user plants
+      setUserPlants((prevPlants) => [...prevPlants, newUserPlant]);
 
-      // Update the state with the new plant list
-      setUserPlants(updatedUserPlants);
-
-      console.log(`Successfully added plant with ID: ${plantId}`);  // Debugging log
+      console.log(`Successfully added plant with user_plant ID: ${newUserPlant.id}`);  // Debugging log
     } catch (err) {
-      console.error(`Failed to add plant with ID: ${plantId}`, err);  // Debugging log
+      console.error(`Failed to add plant with plant ID: ${plantId}`, err);  // Debugging log
       setError('Failed to add plant');
     }
   };

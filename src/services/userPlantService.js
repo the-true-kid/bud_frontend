@@ -30,14 +30,14 @@ export const fetchUserPlants = async () => {
   }
 };
 
-// Delete plant by plantId
-export const deletePlant = async (plantId) => {
+// Delete plant by userPlantId
+export const deletePlant = async (userPlantId) => {
   const token = getToken();
   console.log("Token:", token);  // Debugging log
   if (!token) throw new Error('No token found');
 
   try {
-    const response = await fetch(`http://localhost:5000/api/userPlants/${plantId}`, {
+    const response = await fetch(`http://localhost:5000/api/userPlants/${userPlantId}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -52,22 +52,22 @@ export const deletePlant = async (plantId) => {
       throw new Error(`Failed to delete plant: ${response.statusText}`);
     }
 
-    console.log(`Deleted plant with ID: ${plantId}`);  // Debugging log
+    console.log(`Deleted plant with ID: ${userPlantId}`);  // Debugging log
   } catch (error) {
     console.error("Error in deletePlant:", error);  // Debugging log
     throw error;
   }
 };
 
-// Update plant by plantId with updatedData
-export const updatePlant = async (plantId, updatedData) => {
+// Update plant by userPlantId with updatedData
+export const updatePlant = async (userPlantId, updatedData) => {
   const token = getToken();
   console.log("Token:", token);  // Debugging log
   console.log("Updating plant with data:", updatedData);  // Debugging log
   if (!token) throw new Error('No token found');
 
   try {
-    const response = await fetch(`http://localhost:5000/api/userPlants/${plantId}`, {
+    const response = await fetch(`http://localhost:5000/api/userPlants/${userPlantId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

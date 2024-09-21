@@ -12,7 +12,7 @@ const PlantCard = ({ userPlant, onDelete, onUpdate }) => {
       watering_interval: wateringInterval,
       last_watered: new Date(),
     };
-    onUpdate(userPlant.plant_id, updatedData);  // Trigger the update
+    onUpdate(userPlant.id, updatedData);  // Trigger the update using userPlant.id
     setIsEditing(false);  // Exit editing mode
   };
 
@@ -42,7 +42,7 @@ const PlantCard = ({ userPlant, onDelete, onUpdate }) => {
         <button onClick={() => setIsEditing(true)}>Edit</button>
       )}
       
-      <button onClick={() => onDelete(userPlant.plant_id)}>Delete</button>
+      <button onClick={() => onDelete(userPlant.id)}>Delete</button>  {/* Use userPlant.id for deletion */}
     </div>
   );
 };

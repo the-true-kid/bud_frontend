@@ -13,9 +13,9 @@ const PlantList = ({ userPlants, handleDeletePlant, handleUpdatePlant }) => {
 
         return (
           <PlantCard 
-            key={userPlant.plant_id}  // Use unique plant_id as key
+            key={userPlant.id}  // Use unique userPlant.id as key
             userPlant={userPlant}  // Pass the user plant object
-            onDelete={() => handleDeletePlant(userPlant.plant_id)}  // Pass delete handler
+            onDelete={() => handleDeletePlant(userPlant.id)}  // Pass delete handler using userPlant.id
             onUpdate={handleUpdatePlant}  // Pass update handler
           />
         );
@@ -25,4 +25,3 @@ const PlantList = ({ userPlants, handleDeletePlant, handleUpdatePlant }) => {
 };
 
 export default PlantList;
-
