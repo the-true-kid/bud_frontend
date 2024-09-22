@@ -1,23 +1,22 @@
 import React, { useContext } from "react";
+import { useNavigate } from 'react-router-dom';
 import PlantList from "../components/PlantList";
-import AddPlantForm from "../components/AddPlantForm";
 import { UserContext } from "../contexts/UserContext";
 import usePlants from "../hooks/usePlants/usePlants";
 
 const GardenView = () => {
-  const { user, loading } = useContext(UserContext);
-  const {
-    userPlants,
-    plants,
-    error,
-    handleAddPlant,
-    handleDeletePlant,
-    handleUpdatePlant,
-  } = usePlants(user);
+  const { user, logout } = useContext(UserContext); // Add logout from context
+  const { userPlants, error, handleDeletePlant, handleUpdatePlant } = usePlants(user);
+  const navigate = useNavigate();
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  const navigateToAddPlant = () => {
+    navigate('/add-plant'); // Navigate to add plant page
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/'); // Navigate back to login after logout
+  };
 
   if (error) {
     return <p>{error}</p>;
@@ -26,13 +25,13 @@ const GardenView = () => {
   return (
     <div>
       <h1>My Garden</h1>
-      <AddPlantForm handleAddPlant={handleAddPlant} plants={plants} />{" "}
-      {/* Pass plants here */}
       <PlantList
         userPlants={userPlants}
         handleDeletePlant={handleDeletePlant}
         handleUpdatePlant={handleUpdatePlant}
       />
+      <button onClick={navigateToAddPlant}>Add New Plant</button> {/* Button to navigate to AddPlantPage */}
+      <button onClick={handleLogout} style={{ marginLeft: '10px' }}>Logout</button> {/* Logout button */}
     </div>
   );
 };

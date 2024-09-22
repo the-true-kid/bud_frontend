@@ -19,7 +19,10 @@ export const UserProvider = ({ children }) => {
       })
         .then(response => {
           if (!response.ok) {
-            throw new Error('Token is invalid or expired');
+            if (response.status === 401) {
+              throw new Error('Token is invalid or expired');
+            }
+            throw new Error('Failed to fetch user data');
           }
           return response.json();
         })
@@ -55,12 +58,12 @@ export const UserProvider = ({ children }) => {
         setError(null);  // Clear any previous errors
         return true;
       } else {
-        setError('Login failed');  // Show error message for failed login
+        setError(data.message || 'Login failed');  // Show error message for failed login
         return false;
       }
     } catch (error) {
       console.error('Login failed:', error);
-      setError('Login failed');  // Set error message for failure
+      setError('Login failed: ' + error.message);  // Set error message for failure
       return false;
     }
   };

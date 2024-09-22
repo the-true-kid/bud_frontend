@@ -4,7 +4,7 @@ import PlantSearch from './PlantSearch';
 import PlantSelectionDropdown from './PlantSelectionDropDown';
 import PlantFormFields from './PlantFormFields';
 
-const AddPlantForm = ({ handleAddPlant }) => {
+const AddPlantForm = ({ handleAddPlant, navigateToGarden }) => { // Add navigateToGarden prop
   const [plantId, setPlantId] = useState('');
   const [plants, setPlants] = useState([]);
   const [filteredPlants, setFilteredPlants] = useState([]);
@@ -52,6 +52,7 @@ const AddPlantForm = ({ handleAddPlant }) => {
       return;
     }
     handleAddPlant(plantId, nickname, size, location, wateringInterval);
+    navigateToGarden(); // Automatically navigate back to GardenView after adding the plant
   };
 
   return (
@@ -90,3 +91,4 @@ const AddPlantForm = ({ handleAddPlant }) => {
 };
 
 export default AddPlantForm;
+
