@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAllPlants } from '../services/plantService'; // Assuming you have this service
+import { fetchAllPlants } from '../services/plantService'; 
 import PlantSearch from './PlantSearch';
 import PlantSelectionDropdown from './PlantSelectionDropDown';
 import PlantFormFields from './PlantFormFields';
 
-const AddPlantForm = ({ handleAddPlant, navigateToGarden }) => { // Add navigateToGarden prop
+const AddPlantForm = ({ handleAddPlant, navigateToGarden }) => {
   const [plantId, setPlantId] = useState('');
   const [plants, setPlants] = useState([]);
   const [filteredPlants, setFilteredPlants] = useState([]);
@@ -17,9 +17,9 @@ const AddPlantForm = ({ handleAddPlant, navigateToGarden }) => { // Add navigate
   // Fetch plants on mount
   useEffect(() => {
     const loadPlants = async () => {
-      const plantData = await fetchAllPlants(); // Use existing service to fetch the plants
+      const plantData = await fetchAllPlants(); 
       setPlants(plantData);
-      setFilteredPlants(plantData); // Initially show all plants
+      setFilteredPlants(plantData); 
     };
     loadPlants();
   }, []);
@@ -27,14 +27,13 @@ const AddPlantForm = ({ handleAddPlant, navigateToGarden }) => { // Add navigate
   // Filter plants based on the search term
   useEffect(() => {
     const filtered = plants.filter(plant =>
-      plant.name.toLowerCase().includes(searchTerm.toLowerCase()) // Filter by plant name
+      plant.name.toLowerCase().includes(searchTerm.toLowerCase()) 
     );
     setFilteredPlants(filtered);
-    // Reset plantId when search term changes
     if (filtered.length === 1) {
-      setPlantId(filtered[0].id); // Automatically select if only one match
+      setPlantId(filtered[0].id); 
     } else {
-      setPlantId(''); // Reset the selection if multiple or no match
+      setPlantId(''); 
     }
   }, [searchTerm, plants]);
 
@@ -52,7 +51,17 @@ const AddPlantForm = ({ handleAddPlant, navigateToGarden }) => { // Add navigate
       return;
     }
     handleAddPlant(plantId, nickname, size, location, wateringInterval);
-    navigateToGarden(); // Automatically navigate back to GardenView after adding the plant
+
+    // Clear form inputs after adding plant
+    setSearchTerm('');
+    setPlantId('');
+    setNickname('');
+    setSize('');
+    setLocation('');
+    setWateringInterval(7);
+
+    // Navigate back to GardenView
+    navigateToGarden(); 
   };
 
   return (
@@ -91,4 +100,3 @@ const AddPlantForm = ({ handleAddPlant, navigateToGarden }) => { // Add navigate
 };
 
 export default AddPlantForm;
-

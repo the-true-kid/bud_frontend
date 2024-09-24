@@ -1,15 +1,16 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AddPlantForm from '../components/AddPlantForm';
-import { UserContext } from '../contexts/UserContext'; 
+import { UserContext } from '../contexts/UserContext';
 import usePlants from '../hooks/usePlants/usePlants';
 
 const AddPlantPage = () => {
   const { user, logout } = useContext(UserContext);
-  const { plants, handleAddPlant } = usePlants(user);
-  const navigate = useNavigate(); 
+  const { plants, handleAddPlant, fetchPlants } = usePlants(user); // Fetch plants function from the hook
+  const navigate = useNavigate();
 
-  const navigateToGarden = () => {
+  const navigateToGarden = async () => {
+    await fetchPlants(); // Ensure you re-fetch the plants before navigating back
     navigate('/garden'); // Navigate to GardenView
   };
 
@@ -29,4 +30,3 @@ const AddPlantPage = () => {
 };
 
 export default AddPlantPage;
-
