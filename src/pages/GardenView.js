@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/NavBar';
 import PlantList from "../components/PlantList";
 import { UserContext } from "../contexts/UserContext";
 import usePlants from "../hooks/usePlants/usePlants";
@@ -24,6 +25,7 @@ const GardenView = () => {
 
   return (
     <div>
+      <Navbar logout={logout} /> {/* Navbar stays on top */}
       <h1>My Garden</h1>
       <PlantList
         userPlants={userPlants}

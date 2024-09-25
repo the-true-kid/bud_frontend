@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/NavBar';
 import AddPlantForm from '../components/AddPlantForm';
 import { UserContext } from '../contexts/UserContext';
 import usePlants from '../hooks/usePlants/usePlants';
@@ -21,6 +22,7 @@ const AddPlantPage = () => {
 
   return (
     <div>
+      <Navbar logout={logout} /> {/* Navbar stays on top */}
       <h1>Add a New Plant</h1>
       <AddPlantForm handleAddPlant={handleAddPlant} plants={plants} navigateToGarden={navigateToGarden} />
       <button onClick={navigateToGarden}>Back to Garden</button>
