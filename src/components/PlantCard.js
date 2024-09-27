@@ -4,30 +4,51 @@ import './PlantCard.css';
 const PlantCard = ({ userPlant, onDelete, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [nickname, setNickname] = useState(userPlant.nickname || 'No nickname');
-  const [wateringInterval, setWateringInterval] = useState(userPlant.watering_interval || 7);
+  const [wateringInterval, setWateringInterval] = useState(userPlant.custom_watering_interval || userPlant.watering_interval || 7);
+  const [customCareInfo, setCustomCareInfo] = useState(userPlant.custom_care_info || '');
   const [size, setSize] = useState(userPlant.size || '');
   const [location, setLocation] = useState(userPlant.location || '');
+  const [image, setImage] = useState(null); // For storing the uploaded image file
+  const [imagePreview, setImagePreview] = useState(userPlant.custom_image_url || userPlant.image_url || '');
 
   const handleUpdate = () => {
     const updatedData = {
       nickname,
-      watering_interval: wateringInterval,
+      custom_watering_interval: wateringInterval,
+      custom_care_info: customCareInfo,
       size,
       location,
-      last_watered: new Date(),  // Optional: Track last watered here
+      last_watered: new Date(),  // Optionally track last watered here
     };
-    onUpdate(userPlant.id, updatedData);  // Trigger the update using userPlant.id
+
+    // If an image has been uploaded, include it in the update
+    onUpdate(userPlant.id, updatedData, image);
     setIsEditing(false);  // Exit editing mode
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+
+    // Display image preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result); // Show image preview
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
     <div className="plant-card">
       <h3>{userPlant.plantName || 'Unnamed Plant'}</h3> {/* Display the plant name */}
+      
+      <img src={imagePreview} alt="Plant" style={{ width: '100px', height: '100px', objectFit: 'cover' }} /> {/* Image preview */}
       <p>Nickname: {nickname}</p>
       <p>Watering Interval: {wateringInterval} days</p>
       <p>Size: {size || 'Not specified'}</p>
       <p>Location: {location || 'Not specified'}</p>
-      
+      <p>Care Info: {customCareInfo || 'No custom care info provided'}</p>
+
       {isEditing ? (
         <div>
           <input 
@@ -53,6 +74,15 @@ const PlantCard = ({ userPlant, onDelete, onUpdate }) => {
             value={location} 
             onChange={(e) => setLocation(e.target.value)} 
             placeholder="Location" 
+          />
+          <textarea 
+            value={customCareInfo} 
+            onChange={(e) => setCustomCareInfo(e.target.value)} 
+            placeholder="Custom Care Info" 
+          />
+          <input 
+            type="file" 
+            onChange={handleImageChange}  // Handle image file upload
           />
           <button onClick={handleUpdate}>Save</button>
         </div>

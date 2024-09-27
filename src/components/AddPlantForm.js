@@ -16,6 +16,10 @@ const AddPlantForm = ({ handleAddPlant, navigateToGarden }) => {
     setLocation,
     wateringInterval,
     setWateringInterval,
+    customCareInfo,
+    setCustomCareInfo,
+    image,
+    setImage,
     handleSubmit,
   } = useForm(handleAddPlant, navigateToGarden);
 
@@ -27,7 +31,7 @@ const AddPlantForm = ({ handleAddPlant, navigateToGarden }) => {
   };
 
   return (
-    <form onSubmit={(e) => handleSubmit(e, plantId)}>
+    <form onSubmit={(e) => handleSubmit(e, plantId, image)}> {/* Pass image to handleSubmit */}
       {/* Search Plant Component */}
       <PlantSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
@@ -46,7 +50,7 @@ const AddPlantForm = ({ handleAddPlant, navigateToGarden }) => {
         </>
       )}
 
-      {/* Plant Form Fields */}
+      {/* Plant Form Fields for Nickname, Size, and Location */}
       <PlantFormFields 
         nickname={nickname}
         setNickname={setNickname}
@@ -55,6 +59,30 @@ const AddPlantForm = ({ handleAddPlant, navigateToGarden }) => {
         location={location}
         setLocation={setLocation}
       />
+
+      {/* Custom Fields for Watering Interval and Care Info */}
+      <label>
+        Custom Watering Interval:
+        <input
+          type="number"
+          value={wateringInterval}
+          onChange={(e) => setWateringInterval(e.target.value)}
+        />
+      </label>
+
+      <label>
+        Custom Care Info:
+        <textarea
+          value={customCareInfo}
+          onChange={(e) => setCustomCareInfo(e.target.value)}
+        />
+      </label>
+
+      {/* Image Upload */}
+      <label>
+        Upload Plant Image:
+        <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+      </label>
 
       <button type="submit">Add Plant</button>
     </form>

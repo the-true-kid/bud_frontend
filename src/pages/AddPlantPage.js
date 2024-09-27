@@ -7,7 +7,7 @@ import usePlants from '../hooks/usePlants/usePlants';
 
 const AddPlantPage = () => {
   const { user, logout } = useContext(UserContext);
-  const { plants, handleAddPlant, fetchPlants } = usePlants(user); // Fetch plants function from the hook
+  const { plants, handleAddPlant, fetchPlants } = usePlants(user);
   const navigate = useNavigate();
 
   const navigateToGarden = async () => {
@@ -24,6 +24,7 @@ const AddPlantPage = () => {
     <div>
       <Navbar logout={logout} /> {/* Navbar stays on top */}
       <h1>Add a New Plant</h1>
+      {/* Pass handleAddPlant to AddPlantForm with custom fields and image */}
       <AddPlantForm handleAddPlant={handleAddPlant} plants={plants} navigateToGarden={navigateToGarden} />
       <button onClick={navigateToGarden}>Back to Garden</button>
       <button onClick={handleLogout} style={{ marginLeft: '10px' }}>Logout</button>

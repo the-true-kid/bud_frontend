@@ -5,12 +5,16 @@ const useForm = (handleAddPlant, navigateToGarden) => {
   const [size, setSize] = useState('');
   const [location, setLocation] = useState('');
   const [wateringInterval, setWateringInterval] = useState(7);
+  const [customCareInfo, setCustomCareInfo] = useState('');
+  const [image, setImage] = useState(null);
 
   const resetForm = () => {
     setNickname('');
     setSize('');
     setLocation('');
     setWateringInterval(7);
+    setCustomCareInfo('');
+    setImage(null);
   };
 
   const handleSubmit = (e, plantId) => {
@@ -19,7 +23,14 @@ const useForm = (handleAddPlant, navigateToGarden) => {
       alert('Please select a plant');
       return;
     }
-    handleAddPlant(plantId, nickname, size, location, wateringInterval);
+    handleAddPlant({
+      plant_id: plantId,
+      nickname,
+      size,
+      location,
+      custom_watering_interval: wateringInterval,
+      custom_care_info: customCareInfo,
+    }, image);
     resetForm();
     navigateToGarden();
   };
@@ -33,6 +44,10 @@ const useForm = (handleAddPlant, navigateToGarden) => {
     setLocation,
     wateringInterval,
     setWateringInterval,
+    customCareInfo,
+    setCustomCareInfo,
+    image,
+    setImage,
     handleSubmit,
   };
 };

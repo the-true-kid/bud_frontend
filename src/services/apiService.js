@@ -1,20 +1,25 @@
-import { getToken } from '../utils/token';
-
-// Generic function to handle API requests
-export const apiRequest = async (url, method = 'GET', body = null) => {
-  const token = getToken();
+// apiService.js
+export const apiRequest = async (url, method = 'GET', body = null, isFormData = false) => {
+  const token = localStorage.getItem('token');
   if (!token) throw new Error('No token found');
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  // Only add Content-Type if body is not FormData
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   const options = {
     method,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
   };
 
+  // If it's FormData, directly assign it to body, else stringify the body if it's an object
   if (body) {
-    options.body = JSON.stringify(body);
+    options.body = isFormData ? body : JSON.stringify(body);
   }
 
   try {
@@ -22,13 +27,12 @@ export const apiRequest = async (url, method = 'GET', body = null) => {
     if (!response.ok) {
       const errorResponse = await response.json();
       console.error('API Error:', errorResponse);
-      throw new Error(`Failed to ${method} data: ${response.statusText}`);
+      throw new Error(`Failed to ${method} data from ${url}: ${errorResponse.message || response.statusText}`);
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json(); // Simplified the return statement
   } catch (error) {
     console.error(`Error in ${method} request to ${url}:`, error);
-    throw error;
+    throw new Error(`Error in ${method} request to ${url}: ${error.message}`);
   }
 };
