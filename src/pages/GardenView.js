@@ -1,39 +1,31 @@
-import React, { useContext } from "react";
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/NavBar';
-import PlantList from "../components/PlantList";
-import { UserContext } from "../contexts/UserContext";
-import usePlants from "../hooks/usePlants/usePlants";
+import React, { useEffect } from 'react';
+import NavBar from '../components/NavBar';  // Import NavBar
+import usePlants from '../hooks/usePlants/usePlants'; // Hook to fetch user-specific plants
+import PlantCard from '../components/PlantCard';  // Import PlantCard
 
 const GardenView = () => {
-  const { user, logout } = useContext(UserContext); // Add logout from context
-  const { userPlants, error, handleDeletePlant, handleUpdatePlant } = usePlants(user);
-  const navigate = useNavigate();
+  const { userPlants, fetchPlants, handleDeletePlant, handleUpdatePlant } = usePlants(); // Fetch user's plants and delete/update handlers
 
-  const navigateToAddPlant = () => {
-    navigate('/add-plant'); // Navigate to add plant page
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/'); // Navigate back to login after logout
-  };
-
-  if (error) {
-    return <p>{error}</p>;
-  }
+  useEffect(() => {
+    fetchPlants(); // Fetch plants when the page loads
+  }, [fetchPlants]);
 
   return (
     <div>
-      <Navbar logout={logout} /> {/* Navbar stays on top */}
-      <h1>My Garden</h1>
-      <PlantList
-        userPlants={userPlants}
-        handleDeletePlant={handleDeletePlant}
-        handleUpdatePlant={handleUpdatePlant}
-      />
-      <button onClick={navigateToAddPlant}>Add New Plant</button> {/* Button to navigate to AddPlantPage */}
-      <button onClick={handleLogout} style={{ marginLeft: '10px' }}>Logout</button> {/* Logout button */}
+      <NavBar />  {/* Include NavBar at the top */}
+      <h1>Your Garden</h1>
+      {userPlants.length > 0 ? (
+        userPlants.map((plant) => (
+          <PlantCard
+            key={plant.id}
+            userPlant={plant}  // Pass individual plant data to the PlantCard
+            onDelete={handleDeletePlant}  // Pass the delete handler
+            onUpdate={handleUpdatePlant}  // Pass the update handler
+          />
+        ))
+      ) : (
+        <div>No plants found in your garden.</div>
+      )}
     </div>
   );
 };

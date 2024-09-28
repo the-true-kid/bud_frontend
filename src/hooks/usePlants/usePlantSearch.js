@@ -9,11 +9,15 @@ const usePlantSearch = () => {
 
   useEffect(() => {
     const loadPlants = async () => {
-      const plantData = await fetchAllPlants();
-      setPlants(plantData);
-      setFilteredPlants(plantData);
+      try {
+        const plantData = await fetchAllPlants();  // Fetch all plants from the backend
+        setPlants(plantData);  // Store the fetched plants
+        setFilteredPlants(plantData);  // Initialize filtered plants with all plants
+      } catch (error) {
+        console.error('Error fetching plants:', error);
+      }
     };
-    loadPlants();
+    loadPlants();  // Call the function to load plants
   }, []);
 
   useEffect(() => {

@@ -37,10 +37,10 @@ const usePlants = (user) => {
     loading,
     error,
     fetchPlants,  // Expose fetchPlants to trigger a refresh
-    handleAddPlant: (plantId, nickname, size, location, wateringInterval) =>
-      handleAddPlant(plantId, nickname, size, location, wateringInterval, setUserPlants),
-    handleUpdatePlant: (userPlantId, updatedData) =>
-      handleUpdatePlant(userPlantId, updatedData, setUserPlants),
+    handleAddPlant: (plantId, nickname, size, location, wateringInterval, image) =>
+      handleAddPlant(plantId, nickname, size, location, wateringInterval, image, setUserPlants),
+    handleUpdatePlant: (userPlantId, updatedData, image) =>
+      handleUpdatePlant(userPlantId, updatedData, image, setUserPlants),
     handleDeletePlant: (userPlantId) =>
       handleDeletePlant(userPlantId, setUserPlants),
   };

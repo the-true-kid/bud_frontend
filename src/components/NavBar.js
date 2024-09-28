@@ -11,7 +11,7 @@ const Navbar = ({ logout }) => {
   };
 
   const navigateToAddPlant = () => {
-    navigate('/add-plant'); // Navigate to the Add Plant page
+    navigate('/select-plant'); // Navigate to the Add Plant page
   };
 
   const handleLogout = () => {

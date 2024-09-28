@@ -4,7 +4,8 @@ import { createFormData } from '../../utils/handleFormData'; // Import the utili
 // Function to handle adding a new plant
 export const handleAddPlant = async (plantData, image, setUserPlants) => {
   try {
-    const formData = createFormData(plantData); // Use the utility to create FormData
+    // Create FormData to handle both user-specific plant data and image
+    const formData = createFormData(plantData); // Use utility to create FormData
 
     // Append the image file to the form data if provided
     if (image) {
@@ -12,18 +13,14 @@ export const handleAddPlant = async (plantData, image, setUserPlants) => {
     }
 
     // Send the form data to the API
-    const newUserPlant = await addPlant(formData);
+    const newUserPlant = await addPlant(formData); // Backend should handle user-specific plant creation
 
-    // Optionally fetch plant details if needed for enriching the state
-    // const plantDetails = await fetchPlantById(newUserPlant.plant_id); // Fetch the plant name
-
-    // Update the user plants state (assuming plantName is part of newUserPlant or fetched)
+    // Update the state for user plants
     setUserPlants((prevPlants) => [
       ...prevPlants,
-      { ...newUserPlant, plantName: plantData.plantName || 'Unnamed Plant' }, // Adjust as needed
+      { ...newUserPlant, plantName: plantData.plantName || 'Unnamed Plant' }, // Ensure you handle the display name
     ]);
   } catch (error) {
     console.error('Error adding plant:', error);
   }
 };
-
