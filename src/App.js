@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './contexts/UserContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout';  // Import the Layout component
 import Login from './pages/Login';  // Login is small, no need to lazy load
 
 // Lazy load other components for better performance
@@ -15,37 +16,42 @@ function App() {
   return (
     <UserProvider>
       <Router>
-        <Suspense fallback={<div>Loading...</div>}> {/* Lazy loading fallback */}
+        <Suspense fallback={<div>Loading...</div>}>
           <Routes>
+            {/* Route for Login */}
             <Route path="/" element={<Login />} />
             <Route path="/register" element={<Register />} />
             
-            {/* Garden View Route */}
+            {/* Protected Routes with Navbar */}
             <Route
               path="/garden"
               element={
                 <ProtectedRoute>
-                  <GardenView />
+                  <Layout>  {/* Wrap with Layout that includes Navbar */}
+                    <GardenView />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
             
-            {/* Plant Selection Route */}
             <Route
               path="/select-plant"
               element={
                 <ProtectedRoute>
-                  <PlantSelectionPage />
+                  <Layout>  {/* Wrap with Layout that includes Navbar */}
+                    <PlantSelectionPage />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
             
-            {/* Customize Plant Route */}
             <Route
               path="/customize-plant"
               element={
                 <ProtectedRoute>
-                  <CustomizePlantPage />
+                  <Layout>  {/* Wrap with Layout that includes Navbar */}
+                    <CustomizePlantPage />
+                  </Layout>
                 </ProtectedRoute>
               }
             />

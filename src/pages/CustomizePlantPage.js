@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import NavBar from '../components/NavBar';  // Add the NavBar here
 import PlantFormFields from '../components/PlantFormFields';
 import { addPlant } from '../services/userPlantService'; 
 
 const CustomizePlantPage = () => {
   const { state } = useLocation(); 
-  const { selectedPlant } = state;
+  const { selectedPlant } = state; // Retrieve the selected plant passed from the selection page
   const [nickname, setNickname] = useState('');
   const [size, setSize] = useState('');
   const [location, setLocation] = useState('');
@@ -19,21 +18,20 @@ const CustomizePlantPage = () => {
     e.preventDefault();
     
     const formData = new FormData();
-    formData.append('plant_id', selectedPlant.id);
+    formData.append('plant_id', selectedPlant.id);  // Pass the plant's ID from the plants table
     formData.append('nickname', nickname);
     formData.append('size', size);
     formData.append('location', location);
     formData.append('customCareInfo', customCareInfo);
     formData.append('customWateringInterval', customWateringInterval);
-    if (image) formData.append('image', image);
+    if (image) formData.append('image', image);  // If an image is selected
 
-    await addPlant(formData);
-    navigate('/garden');
+    await addPlant(formData);  // Call the service to add the customized plant to userPlants
+    navigate('/garden');  // Navigate to the garden view after adding the plant
   };
 
   return (
     <div>
-      <NavBar />  {/* Include NavBar at the top */}
       <h1>Customize {selectedPlant.name}</h1>
       <form onSubmit={handleSubmit}>
         <PlantFormFields

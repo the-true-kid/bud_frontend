@@ -1,82 +1,76 @@
+// src/contexts/UserContext.js
 import React, { createContext, useState, useEffect } from 'react';
 
-export const UserContext = createContext();
+const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
+const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);  // Loading state for app initialization
-  const [error, setError] = useState(null);  // Error state for login and token issues
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Check if the token exists in localStorage when the app loads
+  // Effect to check for an existing token and fetch user data
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Fetch user data using the token
-      fetch('http://localhost:5000/api/users/getUser', {  // Correct path to fetch user data
+      fetch('http://localhost:5000/api/users/getUser', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
-        .then(response => {
-          if (!response.ok) {
-            if (response.status === 401) {
-              throw new Error('Token is invalid or expired');
-            }
-            throw new Error('Failed to fetch user data');
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (data && data.id) {  // Ensure valid user data is returned
-            setUser(data);  // Set user state
+        .then((response) => response.json())
+        .then((data) => {
+          if (data && data.id) {
+            setUser(data); // Set the fetched user data
           }
         })
-        .catch(error => {
-          console.error('Failed to fetch user:', error);
+        .catch((error) => {
           setError(error.message);
-          logout();  // Logout if the token is invalid
+          localStorage.removeItem('token'); // Remove the token if the fetch fails
         })
-        .finally(() => setLoading(false));  // Stop loading after check
+        .finally(() => setLoading(false));
     } else {
-      setLoading(false);  // No token found, stop loading
+      setLoading(false);
     }
   }, []);
 
-  // Login function
+  // Login function implementation
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:5000/api/login', {  // Login route matches backend
+      const response = await fetch('http://localhost:5000/api/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }), // Send email and password to the backend
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        localStorage.setItem('token', data.token);  // Store JWT token in localStorage
-        setUser(data.user);  // Set user data in state
-        setError(null);  // Clear any previous errors
-        return true;
-      } else {
-        setError(data.message || 'Login failed');  // Show error message for failed login
-        return false;
+      const data = await response.json(); // Get the response data
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed'); // Throw error if login fails
       }
+
+      const { token, user } = data; // Destructure the token and user from the response
+      localStorage.setItem('token', token); // Save the token to localStorage
+      setUser(user); // Set the user data in state
+      setError(null); // Clear any previous errors
+
+      return true; // Return success
     } catch (error) {
-      console.error('Login failed:', error);
-      setError('Login failed: ' + error.message);  // Set error message for failure
-      return false;
+      setError(error.message); // Set the error message in state
+      return false; // Return failure
     }
   };
 
-  // Logout function
   const logout = () => {
-    setUser(null);  // Clear user data from state
-    localStorage.removeItem('token');  // Remove token from localStorage
+    setUser(null); // Clear the user data
+    localStorage.removeItem('token'); // Remove the token from localStorage
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout, loading, error }}>
+    <UserContext.Provider value={{ user, loading, error, login, logout }}>
       {children}
     </UserContext.Provider>
   );
 };
+
+export { UserContext, UserProvider };

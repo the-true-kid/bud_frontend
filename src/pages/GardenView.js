@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import NavBar from '../components/NavBar';  // Import NavBar
 import usePlants from '../hooks/usePlants/usePlants'; // Hook to fetch user-specific plants
 import PlantCard from '../components/PlantCard';  // Import PlantCard
 
@@ -12,7 +11,6 @@ const GardenView = () => {
 
   return (
     <div>
-      <NavBar />  {/* Include NavBar at the top */}
       <h1>Your Garden</h1>
       {userPlants.length > 0 ? (
         userPlants.map((plant) => (

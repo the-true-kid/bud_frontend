@@ -15,7 +15,7 @@ const Navbar = ({ logout }) => {
   };
 
   const handleLogout = () => {
-    logout();
+    logout();  // Call logout from props
     navigate('/'); // Navigate back to login after logout
   };
 

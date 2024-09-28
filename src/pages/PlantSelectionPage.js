@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import NavBar from '../components/NavBar'; 
 import PlantSelectionDropDown from '../components/PlantSelectionDropDown';
 import usePlantSearch from '../hooks/usePlants/usePlantSearch';
 
@@ -34,8 +33,7 @@ const PlantSelectionPage = () => {
   };
 
   return (
-    <div>
-      <NavBar /> 
+    <div> 
       <h1>Select a Plant</h1>
 
       <label htmlFor="plant-search">Search for a plant:</label>
